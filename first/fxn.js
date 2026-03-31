@@ -1,5 +1,5 @@
 // named functoin
-function fxn(x) {
+function fxn() {
     console.log("Vardaan Named");
 }
 
@@ -11,7 +11,7 @@ let named_fxn = () => {
 // named_fxn is a variable which has a function written in it
 
 // name(params);
-fxn(9);
+fxn();
 
 named_fxn() // here we have called the function inside named_fxn variable
 
