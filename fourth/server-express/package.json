@@ -1,0 +1,16 @@
+{
+  "name": "tutorial",
+  "version": "3.2.4",
+  "description": "This a express tutorial for cd-308",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Course-Instructor",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "type" : "module"
+}
