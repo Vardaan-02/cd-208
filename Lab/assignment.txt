@@ -1,0 +1,129 @@
+Assignment: Build a Secure REST API with JWT Authentication
+Objective
+Create a Node.js/Express backend that allows users to register, log in, and access a protected route using token-based authentication.
+
+Required Tech Stack & Libraries
+You must use JavaScript and Node.js. Initialize your project with npm init -y and install the following required dependencies:
+
+express: For building the web server and routing.
+
+bcrypt (or bcryptjs): For securely hashing user passwords before saving them.
+
+jsonwebtoken: For generating and verifying JSON Web Tokens (JWT).
+
+dotenv: For managing environment variables (like your secret key).
+
+Note: For the sake of this assignment, you do not need to set up a full database (like MongoDB or PostgreSQL). You may use an in-memory JavaScript array to store user data.
+
+Project Requirements
+Your API must expose the following three endpoints:
+
+POST /register
+
+Accepts a JSON payload containing a username and password.
+
+Checks if the user already exists.
+
+Hashes the password using bcrypt.
+
+Saves the new user (username and hashed password) to your data store.
+
+Returns a success message and a 201 Created status code.
+
+POST /login
+
+Accepts a JSON payload containing a username and password.
+
+Finds the user in the data store.
+
+Compares the provided password with the stored hashed password using bcrypt.
+
+If valid, generates a JWT using jsonwebtoken that expires in 1 hour.
+
+Returns the JWT to the client with a 200 OK status.
+
+GET /protected
+
+A secured route that requires a valid JWT to access.
+
+Requires a custom middleware function to intercept the request, extract the token from the Authorization header, and verify it.
+
+If the token is missing or invalid, return a 401 Unauthorized or 403 Forbidden error.
+
+If valid, return a 200 OK status with a secret message (e.g., "Welcome to the VIP area, [username]!").
+
+Step-by-Step Guide: How to Complete the Assignment
+Follow these steps to successfully implement the authentication flow.
+
+Step 1: Project Setup
+Create a new folder for your project and run npm init -y in your terminal.
+
+Run npm install express bcrypt jsonwebtoken dotenv.
+
+Create an index.js file. This will be your main server file.
+
+Create a .env file in the root directory and define a secret key for your tokens (e.g., JWT_SECRET=mySuperSecretKey123).
+
+Step 2: Basic Server Configuration
+In index.js, import express and dotenv. Call dotenv.config() at the top.
+
+Initialize your Express app and set up the middleware to parse JSON bodies: app.use(express.json()).
+
+Create an empty array const users = [] to act as your temporary database.
+
+Set your server to listen on a port (e.g., 3000).
+
+Step 3: Implement Registration
+Create the app.post('/register', async (req, res) => { ... }) route.
+
+Extract username and password from req.body.
+
+Check if a user with that username already exists in your users array. If so, return a 400 error.
+
+Generate a salt and hash the password using await bcrypt.hash(password, 10).
+
+Push the new user object { username, password: hashedPassword } into the users array.
+
+Send a success response.
+
+Step 4: Implement Login
+Create the app.post('/login', async (req, res) => { ... }) route.
+
+Extract username and password from req.body.
+
+Find the user in the users array. If they don't exist, return a 400 error (e.g., "Cannot find user").
+
+Use await bcrypt.compare(password, user.password) to verify the credentials.
+
+If the password is correct, create a payload object (e.g., const payload = { name: user.username }).
+
+Generate a token: const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }).
+
+Send the token back in the JSON response.
+
+Step 5: Create the Authentication Middleware
+Create a separate function called authenticateToken(req, res, next).
+
+Inside this function, look for the Authorization header. It usually looks like: Bearer <token>.
+
+Extract the token. If there is no token, return a 401 status.
+
+Use jwt.verify(token, process.env.JWT_SECRET, (err, user) => { ... }) to validate it.
+
+If validation fails (error exists), return a 403 status.
+
+If successful, attach the decoded user payload to the request object (req.user = user) and call next() to pass control to the route handler.
+
+Step 6: Implement the Protected Route
+Create the app.get('/protected', authenticateToken, (req, res) => { ... }) route. Notice how the middleware is passed as the second argument.
+
+Inside the route, send back a success JSON response that utilizes the data from req.user (which was set by your middleware).
+
+Testing Your Work
+To verify your assignment is complete, use a tool like Postman or cURL:
+
+Send a POST request to /register with a username and password.
+
+Send a POST request to /login with the same credentials. Copy the JWT string returned in the response.
+
+Send a GET request to /protected. In the Headers tab, add a Key of Authorization and a Value of Bearer YOUR_COPIED_TOKEN_HERE. You should receive the secret message.
